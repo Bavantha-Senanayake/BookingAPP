@@ -1,0 +1,280 @@
+{
+	"info": {
+		"_postman_id": "21b5f6e7-3fa4-40ab-a9e4-a8fd21faa7a0",
+		"name": "Reservation System API",
+		"description": "Complete API collection for testing the Reservation System with overlap prevention and concurrency handling",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26804355",
+		"_collection_link": "https://home00-3653.postman.co/workspace/HOME-Workspace~861ad513-f1be-4d12-8b84-d89489a3979a/collection/26804355-21b5f6e7-3fa4-40ab-a9e4-a8fd21faa7a0?action=share&source=collection_link&creator=26804355"
+	},
+	"item": [
+		{
+			"name": "Health Check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/health",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"health"
+					]
+				},
+				"description": "Check if the server is running"
+			},
+			"response": []
+		},
+		{
+			"name": "Create Reservation",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"resourceId\": \"{{resource_id}}\",\n  \"userId\": \"user-123\",\n  \"startTime\": \"2025-12-20T10:00:00.000Z\",\n  \"endTime\": \"2025-12-20T12:00:00.000Z\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/reservations",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"reservations"
+					]
+				},
+				"description": "Create a new reservation for a resource"
+			},
+			"response": []
+		},
+		{
+			"name": "Create Overlapping Reservation (Should Fail)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"resourceId\": \"{{resource_id}}\",\n  \"userId\": \"user-456\",\n  \"startTime\": \"2025-12-20T11:00:00.000Z\",\n  \"endTime\": \"2025-12-20T13:00:00.000Z\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/reservations",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"reservations"
+					]
+				},
+				"description": "Try to create an overlapping reservation - should return 409 Conflict"
+			},
+			"response": []
+		},
+		{
+			"name": "Create Adjacent Reservation (Should Succeed)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"resourceId\": \"{{resource_id}}\",\n  \"userId\": \"user-789\",\n  \"startTime\": \"2025-12-20T12:00:00.000Z\",\n  \"endTime\": \"2025-12-20T14:00:00.000Z\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/reservations",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"reservations"
+					]
+				},
+				"description": "Create an adjacent reservation (no overlap) - should succeed"
+			},
+			"response": []
+		},
+		{
+			"name": "List All Reservations",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/reservations",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"reservations"
+					]
+				},
+				"description": "Get all reservations with default pagination"
+			},
+			"response": []
+		},
+		{
+			"name": "List Reservations by Resource",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/reservations?resourceId={{resource_id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"reservations"
+					],
+					"query": [
+						{
+							"key": "resourceId",
+							"value": "{{resource_id}}"
+						}
+					]
+				},
+				"description": "Filter reservations by resource ID"
+			},
+			"response": []
+		},
+		{
+			"name": "List Reservations with Pagination",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/reservations?page=2&limit=1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"reservations"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "2"
+						},
+						{
+							"key": "limit",
+							"value": "1"
+						}
+					]
+				},
+				"description": "Get reservations with custom pagination"
+			},
+			"response": []
+		},
+		{
+			"name": "Cancel Reservation",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/reservations/{{reservation_id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"reservations",
+						"{{reservation_id}}"
+					]
+				},
+				"description": "Cancel (delete) a reservation"
+			},
+			"response": []
+		},
+		{
+			"name": "Invalid Request - Missing Fields",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"userId\": \"user-123\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/reservations",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"reservations"
+					]
+				},
+				"description": "Test validation - should return 400 Bad Request"
+			},
+			"response": []
+		},
+		{
+			"name": "Invalid Request - Past Date",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"resourceId\": \"{{resource_id}}\",\n  \"userId\": \"user-123\",\n  \"startTime\": \"2020-01-01T10:00:00.000Z\",\n  \"endTime\": \"2020-01-01T12:00:00.000Z\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/reservations",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"reservations"
+					]
+				},
+				"description": "Test validation - start time in the past, should return 400"
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "resource_id",
+			"value": "PASTE_RESOURCE_ID_HERE",
+			"type": "string"
+		},
+		{
+			"key": "reservation_id",
+			"value": "PASTE_RESERVATION_ID_HERE",
+			"type": "string"
+		}
+	]
+}
