@@ -94,7 +94,6 @@ npm run test:concurrent
 ### 5. **TypeScript Throughout**
    - Strong typing reduces runtime errors
    - Better IDE support and developer experience
-   - Interfaces for DTOs and contracts
 
 ---
 
